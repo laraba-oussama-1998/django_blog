@@ -6,3 +6,4 @@ class BlogConfig(AppConfig):
     name = 'blog'
     
     
+# i am a comment please delete me i will cause you conflicts

@@ -1,15 +1,21 @@
 from django.shortcuts import render, redirect
 # Create your views here.
 from django.contrib import messages
+from .models import Profile
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
+#newly added function
+def update_profile_adding_mobile(user):
+    Profile.objects.update_or_create(user=user, defaults={'mobile': user.profile.mobile})
 
 def register(request):
     if request.method == 'POST':  # there are two main methodes get and post (post for sending information) here check what methode
         form = UserRegisterForm(request.POST)  # request.post is for getting the content of registration
         if form.is_valid():  # check if the form is valid
-            form.save()  # for saving user
+            user = form.save()  # for saving user
+            user.profile.mobile = form.cleaned_data.get('mobile')
+            update_profile_adding_mobile(user)
             username = form.cleaned_data.get('username')  # get the unsername of the user
             messages.success(request, f'Account created for {username}!')  # for showing success message after creation
             return redirect(
